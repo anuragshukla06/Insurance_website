@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 from . import forms
 from . import models
 
 # Create your views here.
+user = None
+loggedIn = 0
 def home(request):
-    return render(request, 'index.html', {})
+    userName = ""
+    if user is not None:
+        userName = user.first_name
+    return render(request, 'index.html', {"loggedIn": loggedIn, "userName": userName})
 
 def about(request):
     return render(request, 'about.html', {})
@@ -20,7 +26,6 @@ def insurance(request):
 def register(request):
     if request.method == "POST":
         form = forms.UserRegistrationForm(request.POST or None)
-        form.save()
         if form.is_valid():
             form.save()
 
@@ -40,7 +45,30 @@ def register(request):
 
     else:
 
-        return render(request, 'register.html', {})
+        return render(request, 'register.html', {"loggedIn": loggedIn})
 
+
+def login_view(request):
+    if request.method == "POST":
+        form = forms.LogInForm(request.POST or None)
+        if form.is_valid():
+            global user, loggedIn
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+
+            if user == None:
+                return HttpResponse("Not able to login")
+            else:
+                login(request, user)
+                loggedIn = 1
+                return redirect(home)
+
+    else:
+        return render(request, "login.html", {})
+def logout_view(request):
+    logout(request)
+    global loggedIn, user
+    loggedIn = 0
+    user = None
+    return redirect(home)
 # def resource(request):
 #     return render(request, 'resource.html', {})

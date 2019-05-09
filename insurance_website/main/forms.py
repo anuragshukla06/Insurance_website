@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from . import models
 
+class LogInForm(forms.Form):
+    username = forms.CharField(max_length=200)
+    password = forms.CharField(max_length=200)
+
 class UserRegistrationForm(UserCreationForm):
 
     address1 = forms.CharField(max_length=200)
@@ -21,7 +25,7 @@ class UserRegistrationForm(UserCreationForm):
                   ]
 
     def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit=False)
+        user = super(UserRegistrationForm, self).save(commit=True)
 
         # userInfo = models.UserInfo()
         # userInfo.address1 = self.cleaned_data['address1']
@@ -32,5 +36,3 @@ class UserRegistrationForm(UserCreationForm):
         # userInfo.zip = self.cleaned_data['zip']
 
 
-        if commit:
-            user.save()

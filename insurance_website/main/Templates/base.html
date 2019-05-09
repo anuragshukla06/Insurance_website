@@ -51,11 +51,16 @@
                 </a> <!-- #branding -->
 
                 <div class="right-section pull-right">
-                    <a href="#" class="phone"><img src="{% static 'main/images/icon-phone.png' %}" class="icon">+91
-                        9399151865</a>
-                    <a href="{% url 'register' %}">
-                        <button type="button" class="btn btn-primary" style="margin: 15px">Register</button>
-                    </a>
+                    {% if loggedIn == 0 %}
+                        <a href="{% url 'register' %}">
+                            <button type="button" class="btn btn-primary" style="margin: 15px">Register/Sign In</button>
+                        </a>
+                    {% elif loggedIn == 1 %}
+                        <a href="#"> Welcome {{userName}}! </a>
+                        <a href="{% url 'logout' %}">
+                            <button type="button" class="btn btn-primary" style="margin: 15px">Log Out</button>
+                        </a>
+                    {% endif %}
                 </div>
             </div> <!-- .container -->
         </div> <!-- .top-header -->
@@ -79,6 +84,7 @@
                     <a href="#"><i class="fa fa-google-plus"></i></a>
                     <a href="#"><i class="fa fa-pinterest"></i></a>
                 </div>
+
 
                 <div class="mobile-navigation"></div>
             </div>
