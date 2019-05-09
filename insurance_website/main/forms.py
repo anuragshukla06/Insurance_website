@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from . import models
 
+
 class LogInForm(forms.Form):
     username = forms.CharField(max_length=200)
     password = forms.CharField(max_length=200)

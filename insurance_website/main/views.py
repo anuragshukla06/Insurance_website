@@ -12,7 +12,7 @@ def home(request):
     userName = ""
     if user is not None:
         userName = user.first_name
-    return render(request, 'index.html', {"loggedIn": loggedIn, "userName": userName})
+    return render(request, 'index.html', {"loggedIn": request.user.is_authenticated, "userName": userName})
 
 def about(request):
     return render(request, 'about.html', {})
@@ -44,8 +44,7 @@ def register(request):
             return HttpResponse("Something went wrong!")
 
     else:
-
-        return render(request, 'register.html', {"loggedIn": loggedIn})
+        return render(request, 'register.html', {"loggedIn": request.user.is_authenticated})
 
 
 def login_view(request):
@@ -70,5 +69,24 @@ def logout_view(request):
     loggedIn = 0
     user = None
     return redirect(home)
+def showPlan(request, planNo):
+    userActive = ""
+    if request.user.is_authenticated == False:
+        userActive = "false"
+    else:
+        userActive = "true"
+    return render(request, "showInsuranceDetail.html", {"planNo": planNo,
+                                                        "loggedIn": loggedIn,
+                                                        "details": {"price": 500,
+                                                                    "duration": 3,
+                                                                    "benifit": 1200000},
+                                                        "userActive": userActive
+                                                        })
+def buyPlan(request, planNo):
+    return render(request, "buyPlan.html", {"planNo": planNo, "loggedIn": loggedIn})
+
+def paymentConfirmation(request, planNo):
+
+    return  render(request, "paymentConfirmation.html", {"planNo": planNo})
 # def resource(request):
 #     return render(request, 'resource.html', {})
