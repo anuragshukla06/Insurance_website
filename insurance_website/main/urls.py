@@ -13,6 +13,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('planDetails/<int:planNo>', views.showPlan, name="showPlan"),
     path('paymentConfirmation/<int:planNo>', views.paymentConfirmation, name="paymentConfirmation"),
-    path('claim', views.claimInsurance, name="claim")
+    path('claim', views.claimInsurance, name="claim"),
+    # path('profile/<username>/changeInfo',views.changeProfile, name='changeProfile'),
     # path('resource', views.resource, name='resource')
 ]

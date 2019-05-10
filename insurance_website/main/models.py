@@ -10,7 +10,7 @@ class UserInfo(models.Model):
     state = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     zip = models.IntegerField()
-    profilePic = models.ImageField(null=True)
+    profilePic = models.ImageField(upload_to='profile_image',null=True)
 
 class Insurance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

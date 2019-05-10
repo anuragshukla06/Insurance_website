@@ -81,11 +81,10 @@ def showPlan(request, planNo):
             planNo = form.cleaned_data["planNo"]
             insuranceReg.Plan = planNo
             insuranceReg.save()
-            return render(request, "showInsuranceDetail.html", {"buyRequest": 1})
+            return render(request, "showInsuranceDetail.html", {"buyRequest": 1, "planNo": planNo})
         else:
             return HttpResponse("ERROR, SOMETHING WENT WRONG!")
 
-    userInfo = models.UserInfo.objects.get(user=request.user)
     return render(request, "showInsuranceDetail.html", {"planNo": planNo,
                                                         "loggedIn": loggedIn,
                                                         "details": {"price": 500,
@@ -93,7 +92,7 @@ def showPlan(request, planNo):
                                                                     "benifit": 1200000},
                                                         "userActive": request.user.is_authenticated,
                                                         "buyRequest": 0,
-                                                        "userInfo": userInfo
+
                                                         })
 def profile(request, username):
     allInsurance = models.Insurance.objects.filter(user = request.user)
@@ -102,9 +101,12 @@ def profile(request, username):
         claim = models.Claims.objects.filter(Insurance_claimed = insurance)
         if len(claim) != 0:
             allClaims.append(claim[0])
+    userInfo = models.UserInfo.objects.get(user=request.user)
     return render(request, "profile.html", {"username": username,
                                             "allInsurance": allInsurance,
-                                            "allClaims": allClaims})
+                                            "allClaims": allClaims,
+                                            "userInfo": userInfo,
+                                            "user": user})
 
 def claimInsurance(request):
     if request.method == "POST":
@@ -125,7 +127,6 @@ def claimInsurance(request):
                 return HttpResponse("Already Claimed")
     else:
         return HttpResponse("Error why")
-
 
 def paymentConfirmation(request, planNo):
 
