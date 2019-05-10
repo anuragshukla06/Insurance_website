@@ -8,6 +8,19 @@ class LogInForm(forms.Form):
     username = forms.CharField(max_length=200)
     password = forms.CharField(max_length=200)
 
+class InsuranceRegForm(forms.Form):
+
+    planNo = forms.IntegerField()
+
+    class Meta:
+        fields = ['planNo']
+
+class ClaimInsuranceForm(forms.Form):
+    insuranceId = forms.IntegerField()
+
+    class Meta:
+        fields = ['insuranceId']
+
 class UserRegistrationForm(UserCreationForm):
 
     address1 = forms.CharField(max_length=200)

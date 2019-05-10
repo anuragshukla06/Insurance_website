@@ -12,7 +12,7 @@ def home(request):
     userName = ""
     if user is not None:
         userName = user.first_name
-    return render(request, 'index.html', {"loggedIn": request.user.is_authenticated, "userName": userName})
+    return render(request, 'index.html', {"loggedIn": request.user.is_authenticated, "userName": request.user.username, "name": userName})
 
 def about(request):
     return render(request, 'about.html', {})
@@ -70,20 +70,62 @@ def logout_view(request):
     user = None
     return redirect(home)
 def showPlan(request, planNo):
-    userActive = ""
-    if request.user.is_authenticated == False:
-        userActive = "false"
-    else:
-        userActive = "true"
+
+    if request.method == "POST":
+        form = forms.InsuranceRegForm(request.POST or None)
+        if form.is_valid():
+            insuranceReg = models.Insurance()
+            insuranceReg.user = request.user
+            insuranceReg.Active = False
+            insuranceReg.Request = True
+            planNo = form.cleaned_data["planNo"]
+            insuranceReg.Plan = planNo
+            insuranceReg.save()
+            return render(request, "showInsuranceDetail.html", {"buyRequest": 1})
+        else:
+            return HttpResponse("ERROR, SOMETHING WENT WRONG!")
+
+    userInfo = models.UserInfo.objects.get(user=request.user)
     return render(request, "showInsuranceDetail.html", {"planNo": planNo,
                                                         "loggedIn": loggedIn,
                                                         "details": {"price": 500,
                                                                     "duration": 3,
                                                                     "benifit": 1200000},
-                                                        "userActive": userActive
+                                                        "userActive": request.user.is_authenticated,
+                                                        "buyRequest": 0,
+                                                        "userInfo": userInfo
                                                         })
-def buyPlan(request, planNo):
-    return render(request, "buyPlan.html", {"planNo": planNo, "loggedIn": loggedIn})
+def profile(request, username):
+    allInsurance = models.Insurance.objects.filter(user = request.user)
+    allClaims = []
+    for insurance in allInsurance:
+        claim = models.Claims.objects.filter(Insurance_claimed = insurance)
+        if len(claim) != 0:
+            allClaims.append(claim[0])
+    return render(request, "profile.html", {"username": username,
+                                            "allInsurance": allInsurance,
+                                            "allClaims": allClaims})
+
+def claimInsurance(request):
+    if request.method == "POST":
+        form = forms.ClaimInsuranceForm(request.POST or None)
+
+        if form.is_valid():
+            insuranceId = form.cleaned_data["insuranceId"]
+            insuranceObject = models.Insurance.objects.get(id=insuranceId)
+            if insuranceObject.Claimed == False:
+                claimObject = models.Claims()
+                insuranceObject.Claimed = True
+                claimObject.Insurance_claimed = insuranceObject
+                claimObject.Handled = False
+                claimObject.save()
+                insuranceObject.save()
+                return redirect(profile, request.user.username)
+            else:
+                return HttpResponse("Already Claimed")
+    else:
+        return HttpResponse("Error why")
+
 
 def paymentConfirmation(request, planNo):
 

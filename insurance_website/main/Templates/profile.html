@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" onclick="showContent(1,0,0)" class="btn btn-secondary">All Insurances</button>
+        <button type="button" onclick="showContent(0,1,0)" class="btn btn-secondary">Claims</button>
+        <button type="button" onclick="showContent(0,0,1)" class="btn btn-secondary">Profile Details</button>
+    </div>
+
+    <!--start of allInsurance Table============================================================-->
+
+    <div class="container" id="allInsurance" style="margin:10px">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Insurance Plan</th>
+                <th scope="col">Requested On</th>
+                <th scope="col">Active</th>
+                <th scope="col">Request Pending</th>
+                <th scope="col">Claim Request</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for insurance in allInsurance %}
+            {% if insurance.Active %}
+            <tr class="table-success">
+                {% else %}
+            <tr>
+                {% endif %}
+                <td>{{insurance.Plan}}</td>
+                <td>{{insurance.StartDate}}</td>
+                <td>{{insurance.Active}}</td>
+                <td>{{insurance.Request}}</td>
+                {% if insurance.Active %}
+                <td>
+                    {% if insurance.Claimed == False %}
+                    <form method="post" action="{% url 'claim' %}">
+                        {% csrf_token %}
+                        <input type="number" value="{{insurance.id}}" name="insuranceId" hidden>
+                        <button type="submit" class="btn btn-success">Claim</button>
+                    </form>
+                    {% else %}
+                    <button type="button" class="btn btn-success" disabled>Claimed</button>
+                    {% endif %}
+                </td>
+                {% else %}
+                <td>
+                    <button type="button" class="btn btn-success" disabled>Claim</button>
+                </td>
+                {% endif %}
+
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <!--end of allInsurance Table============================================================-->
+
+    <!--start of claims Table============================================================-->
+
+    <div class="container" id="claims">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Insurance Plan</th>
+                <th scope="col">Claimed Date</th>
+                <th scope="col">Handled</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for claim in allClaims %}
+            <tr>
+                <td>{{claim.Insurance_claimed.Plan}}</td>
+                <td>{{claim.Claimed_date}}</td>
+                <td>{{claim.Handled}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!--end of claims Table============================================================-->
+
+
+    <div class="card" id="profileDetails">
+        <img class="card-img-top" src="{{userInfo.profilePic}}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                content.</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+        <div class="card-body">
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+</div>
+<script>
+
+  allInsurance = document.getElementById("allInsurance")
+  claims = document.getElementById("claims")
+  profileDetails = document.getElementById("profileDetails")
+  claims.style.display = "none"
+  profileDetails.style.display = "none"
+
+  function showContent(p1, p2, p3){
+
+    if(p1 == 0){
+    console.log("0")
+      allInsurance.style.display = "none";
+    } else {
+      allInsurance.style.display = "block"
+    }
+
+    if(p2 == 0){
+    console.log("1")
+      claims.style.display = "none";
+    } else {
+      claims.style.display = "block"
+    }
+
+    if(p3 == 0){
+    console.log("2")
+      profileDetails.style.display = "none";
+    } else {
+      profileDetails.style.display = "block"
+    }
+
+  }
+
+
+
+
+</script>
+
+{% endblock %}

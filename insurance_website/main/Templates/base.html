@@ -37,7 +37,6 @@
 
 
 <body>
-
 <div id="site-content">
     <header class="site-header">
         <div class="top-header">
@@ -55,11 +54,15 @@
                         <a href="{% url 'register' %}">
                             <button type="button" class="btn btn-primary" style="margin: 15px">Register/Sign In</button>
                         </a>
+
                     {% elif loggedIn == 1 %}
-                        <a href="#"> Welcome {{userName}}! </a>
-                        <a href="{% url 'logout' %}">
-                            <button type="button" class="btn btn-primary" style="margin: 15px">Log Out</button>
-                        </a>
+                        {% if userName %}
+                            <a href="{% url 'profile' userName %}"> Welcome {{name}}! </a>
+                        {% endif %}
+                            <a href="{% url 'logout' %}">
+                                <button type="button" class="btn btn-primary" style="margin: 15px">Log Out</button>
+                            </a>
+
                     {% endif %}
                 </div>
             </div> <!-- .container -->

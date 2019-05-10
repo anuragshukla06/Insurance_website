@@ -1,50 +1,55 @@
 {% extends 'base.html' %}
 {% block body %}
 {% load static %}
-<div class="card text-center">
-  <div class="card-header">
-    Featured
-  </div>
-  <div class="card-body">
-    <h1 class="card-title">
-      {% if planNo == 1 %}
-        Get your Cattle Life Insurance!
-      {% elif planNo == 2 %}
-        Get your pet Life Insurance!
-      {% else %}
-        Get your pet's medical Insurance!
-      {% endif %}
-    </h1>
-    <p class="card-text" style="font-size: 25px">With our minimal monthly charge, get your animal's life insurance by following just few steps. It's easy, secure and economical.
-    Moreover, with our best team your claims are processed in just 5 minutes. So what you are waiting for?</p>
-  </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"><b>Monthly Price: </b>{{details.price}}</li>
-        <li class="list-group-item"><b>Duration: </b>{{details.duration}} Years</li>
-        <li class="list-group-item"><b>Claim Benifits: </b>{{details.benifit}}</li>
-  </ul>
-  <div class="card-body">
-    <button id="buyButton" class="btn btn-primary" onclick="linkLoader({{userActive}})">Buy It!</button>
-  </div>
 
-</div>
-<div id ="error" class="alert alert-danger" role="alert" style="display: none">
-  Please <a href="{% url 'register' %}">SignIn/Register</a> first
-</div>
-<script type="text/javascript">
-  function linkLoader(userActive){
-    buyButton = document.getElementById("buyButton");
-    var planNo = {{planNo}}
-    var url = "{%url 'paymentConfirmation' planNo%}"
-    errorMessage = document.getElementById("error")
-    if(userActive == false){
-      errorMessage.style.display = 'block'
-    } else if(userActive == true){
-      location.href = url
-    }
+{% if buyRequest %}
+    <div class="alert alert-success" role="alert">
+        Congratulations! Your Request for Plan No. {{planNo}} was successful. Sit tight, our agent will contact you soon for more details.
+    </div>
+{% else %}
+    <div class="card text-center">
+        <div class="card-header">
+            Featured
+        </div>
+        <div class="card-body">
+            <h1 class="card-title">
+                {% if planNo == 1 %}
+                Get your Cattle Life Insurance!
+                {% elif planNo == 2 %}
+                Get your pet Life Insurance!
+                {% else %}
+                Get your pet's medical Insurance!
+                {% endif %}
+            </h1>
+            <p class="card-text" style="font-size: 25px">With our minimal monthly charge, get your animal's life insurance
+                by following just few steps. It's easy, secure and economical.
+                Moreover, with our best team your claims are processed in just 5 minutes. So what you are waiting for?</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>Monthly Price: </b>{{details.price}}</li>
+            <li class="list-group-item"><b>Duration: </b>{{details.duration}} Years</li>
+            <li class="list-group-item"><b>Claim Benifits: </b>{{details.benifit}}</li>
+        </ul>
+        <div class="card-body">
 
+            {% if userActive == False %}
+                <div id="error" class="alert alert-danger" role="alert">
 
-  }
-</script>
+                    To buy the plan, please <a href="{% url 'register' %}">SignIn/Register</a> first
+                </div>
+            {% else %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="number" value="{{planNo}}" name="planNo" hidden>
+
+                    <button id="buyButton" class="btn btn-primary">Buy It!</button>
+                </form>
+            {% endif %}
+        </div>
+
+    </div>
+{% endif %}
+
 {% endblock %}
 
