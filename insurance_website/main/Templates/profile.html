@@ -86,7 +86,9 @@
 
 
     <div class="card" id="profileDetails">
+        {% if userInfo.profilePic %}
         <img class="card-img-top" src="{{userInfo.profilePic.url}}" alt="Profile Pic">
+        {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{user.first_name}} {{user.last_name}}</h5>
         </div>
